@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Courier.Core.Dto;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Courier.Core.Services
 {
@@ -20,8 +23,34 @@ namespace Courier.Core.Services
                 return null;
             }
             var content = await response.Content.ReadAsStringAsync();
+            var location = JsonConvert.DeserializeObject<LocationResponse>(content);
 
             return new AddressDto();
+        }
+
+        private class LocationResponse
+        {
+            public IEnumerable<LocationResult> Results { get; set; }
+        }
+
+        private class LocationResult
+        {
+            [JsonProperty(PropertyName = "formatted_address")]
+            public string FormattedAddress { get; set; }
+
+            [JsonProperty(PropertyName = "address_components")]
+            public IEnumerable<AddressComponent> AddressComponents { get; set; }
+        }
+
+        private class AddressComponent
+        {
+            [JsonProperty(PropertyName = "long_name")]
+            public string LongName { get; set; }
+
+            [JsonProperty(PropertyName = "short_name")]
+            public string ShortName { get; set; }
+
+            public IEnumerable<string> Types { get; set; }
         }
     }
 }
