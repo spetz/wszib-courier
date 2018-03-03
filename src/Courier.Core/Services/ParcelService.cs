@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Courier.Core.Domain;
+using Courier.Core.Dto;
 
 namespace Courier.Core.Services
 {
@@ -13,6 +15,36 @@ namespace Courier.Core.Services
         public ParcelService(ILocationService locationService)
         {
             _locationService = locationService;
+        }
+
+        public async Task<ParcelDetailsDto> GetAsync(Guid id)
+        {
+            await Task.CompletedTask;
+            var parcel = _parcels.SingleOrDefault(x => x.Id == id);
+
+            return parcel == null ? null : new ParcelDetailsDto
+            {
+                Id = parcel.Id,
+                Name = parcel.Name,
+                SentAt = parcel.SentAt,
+                Received = parcel.ReceivedAt.HasValue,
+                SenderId = parcel.SenderId,
+                ReceiverId = parcel.ReceiverId,
+                ReceivedAt = parcel.ReceivedAt
+            };
+        }
+
+        public async Task<IEnumerable<ParcelDto>> BrowseAsync()
+        {
+            await Task.CompletedTask;
+            
+            return _parcels.Select(x => new ParcelDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                SentAt = x.SentAt,
+                Received = x.ReceivedAt.HasValue,                
+            });
         }
 
         public async Task CreateAsync(Guid id, string name, Guid senderId, 

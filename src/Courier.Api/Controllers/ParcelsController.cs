@@ -18,14 +18,18 @@ namespace Courier.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            return Ok();
+            var parcel = await _parcelService.GetAsync(id);
+            if (parcel == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(parcel);
         }
 
         [HttpGet("")]
         public async Task<IActionResult> Get()
-        {
-            return Ok();
-        }
+            => Ok(await _parcelService.BrowseAsync());
 
         [HttpGet("delivery-available/{address}")]
         public async Task<IActionResult> DeliveryAvailable(string address)
