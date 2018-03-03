@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Courier.Core.Dto;
@@ -24,8 +25,14 @@ namespace Courier.Core.Services
             }
             var content = await response.Content.ReadAsStringAsync();
             var location = JsonConvert.DeserializeObject<LocationResponse>(content);
-
-            return new AddressDto();
+            var result = location.Results?.FirstOrDefault();
+            
+            return result == null ? null : new AddressDto
+                {
+                    Latitude = result.Geometry.Location.Lat,
+                    Longitude = result.Geometry.Location.Lng,
+                    Location = result.FormattedAddress
+                };
         }
 
         private class LocationResponse
@@ -40,6 +47,8 @@ namespace Courier.Core.Services
 
             [JsonProperty(PropertyName = "address_components")]
             public IEnumerable<AddressComponent> AddressComponents { get; set; }
+            
+            public Geometry Geometry { get; set; }
         }
 
         private class AddressComponent
@@ -51,6 +60,17 @@ namespace Courier.Core.Services
             public string ShortName { get; set; }
 
             public IEnumerable<string> Types { get; set; }
+        }
+
+        private class Geometry
+        {
+            public GeometryLocation Location { get; set; }
+        }
+
+        private class GeometryLocation
+        {
+            public double Lat { get; set; }
+            public double Lng { get; set; } 
         }
     }
 }
