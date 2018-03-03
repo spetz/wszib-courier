@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Courier.Core.Domain;
 using Courier.Core.Dto;
+using Courier.Core.Queries;
 
 namespace Courier.Core.Services
 {
@@ -34,7 +35,7 @@ namespace Courier.Core.Services
             };
         }
 
-        public async Task<IEnumerable<ParcelDto>> BrowseAsync()
+        public async Task<PagedResult<ParcelDto>> BrowseAsync(BrowseParcels query)
         {
             await Task.CompletedTask;
             
@@ -44,7 +45,8 @@ namespace Courier.Core.Services
                 Name = x.Name,
                 SentAt = x.SentAt,
                 Received = x.ReceivedAt.HasValue,                
-            });
+            })
+            .Paginate(query);
         }
 
         public async Task CreateAsync(Guid id, string name, Guid senderId, 

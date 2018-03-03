@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Courier.Api.Framework;
 using Courier.Core.Commands.Parcels;
+using Courier.Core.Queries;
 using Courier.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,8 +33,8 @@ namespace Courier.Api.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Get()
-            => Ok(await _parcelService.BrowseAsync());
+        public async Task<IActionResult> Get([FromQuery] BrowseParcels query)
+            => Ok(await _parcelService.BrowseAsync(query));
 
         [HttpGet("delivery-available/{address}")]
         public async Task<IActionResult> DeliveryAvailable(string address)
