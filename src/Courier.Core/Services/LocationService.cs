@@ -16,6 +16,9 @@ namespace Courier.Core.Services
             BaseAddress = new Uri("https://maps.googleapis.com/maps/api/geocode/json")
         };
 
+        public async Task<bool> ExistsAsync(string address)
+            => await GetAsync(address) != null;
+
         public async Task<AddressDto> GetAsync(string address)
         {
             var response = await _client.GetAsync($"?address={address}&key=AIzaSyD5UaNtOrvxjvxUJscB1qsCfHrPWv6UTtk");

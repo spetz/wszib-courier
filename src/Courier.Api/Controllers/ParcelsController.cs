@@ -8,11 +8,11 @@ namespace Courier.Api.Controllers
 {
     public class ParcelsController : ApiControllerBase
     {
-        private readonly ILocationService _locationService;
+        private readonly IParcelService _parcelService;
 
-        public ParcelsController(ILocationService locationService)
+        public ParcelsController(IParcelService parcelService)
         {
-            _locationService = locationService;
+            _parcelService = parcelService;
         }
 
         [HttpGet("{id}")]
@@ -30,8 +30,8 @@ namespace Courier.Api.Controllers
         [HttpGet("delivery-available/{address}")]
         public async Task<IActionResult> DeliveryAvailable(string address)
         {
-            var dto = await _locationService.GetAsync(address);
-            if (dto != null)
+            var deliveryAvailable = await _parcelService.DeliveryAvailableAsync(address);
+            if (deliveryAvailable)
             {
                 return Ok();
             }
@@ -42,7 +42,10 @@ namespace Courier.Api.Controllers
         [HttpPost("")]
         public async Task<IActionResult> Post([FromBody] CreateParcel command)
         {
-            return Ok();
+            await _parcelService.CreateAsync(command.Id, command.Name,
+                command.SenderId, command.ReceiverId, command.ReceiverAddress);
+
+            return CreatedAtAction(nameof(Get), new { id = command.Id}, null);
         }
     }
 }

@@ -5,6 +5,7 @@ namespace Courier.Core.Commands.Parcels
 {
     public class CreateParcel : ICommand
     {
+        public Guid Id { get; } = Guid.NewGuid();
         public string Name { get; }
         public Guid SenderId { get; }
         public Guid ReceiverId { get; }

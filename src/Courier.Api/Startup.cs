@@ -26,6 +26,7 @@ namespace Courier.Api
         {
             services.AddMvc();
             services.AddTransient<ILocationService,LocationService>();
+            services.AddTransient<IParcelService,ParcelService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
