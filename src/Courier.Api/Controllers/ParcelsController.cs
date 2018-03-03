@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Courier.Api.Framework;
 using Courier.Core.Commands.Parcels;
 using Courier.Core.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +10,12 @@ namespace Courier.Api.Controllers
     public class ParcelsController : ApiControllerBase
     {
         private readonly IParcelService _parcelService;
+        private readonly ICommandDispatcher _commandDispatcher;
 
-        public ParcelsController(IParcelService parcelService)
+        public ParcelsController(ICommandDispatcher commandDispatcher,
+            IParcelService parcelService)
         {
+            _commandDispatcher = commandDispatcher;
             _parcelService = parcelService;
         }
 
@@ -46,8 +50,7 @@ namespace Courier.Api.Controllers
         [HttpPost("")]
         public async Task<IActionResult> Post([FromBody] CreateParcel command)
         {
-            await _parcelService.CreateAsync(command.Id, command.Name,
-                command.SenderId, command.ReceiverId, command.ReceiverAddress);
+            await _commandDispatcher.DispatchAsync(command);
 
             return CreatedAtAction(nameof(Get), new { id = command.Id}, null);
         }
