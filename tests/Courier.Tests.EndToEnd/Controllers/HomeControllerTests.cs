@@ -9,18 +9,8 @@ using Xunit;
 
 namespace Courier.Tests.EndToEnd.Controllers
 {
-    public class HomeControllerTests
+    public class HomeControllerTests : TestControllerBase
     {
-        TestServer Server;
-        HttpClient HttpClient;
-
-        public HomeControllerTests()
-        {
-            Server = new TestServer(WebHost.CreateDefaultBuilder()
-                .UseStartup<Startup>());
-            HttpClient = Server.CreateClient();
-        }
-
         [Fact]
         public async Task home_controller_get_should_return_string_content()
         {
