@@ -7,10 +7,12 @@ using Autofac.Extensions.DependencyInjection;
 using Courier.Api.Framework;
 using Courier.Core.Commands;
 using Courier.Core.Commands.Parcels;
+using Courier.Core.Domain;
 using Courier.Core.Options;
 using Courier.Core.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -48,6 +50,9 @@ namespace Courier.Api
                 .AsClosedTypesOf(typeof(ICommandHandler<>))
                 .InstancePerLifetimeScope();
 
+            builder.RegisterType<PasswordHasher<User>>()
+                .As<IPasswordHasher<User>>();
+                
             builder.Populate(services);
             Container = builder.Build();
 

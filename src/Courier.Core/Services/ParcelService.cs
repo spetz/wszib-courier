@@ -69,6 +69,6 @@ namespace Courier.Core.Services
             => await _locationService.ExistsAsync(address);
 
         private User GetUser(Guid id)
-            => new User($"{id}@email.com", "test", "test");
+            => new User(id, $"{id}@email.com", "test", "test");
     }
 }

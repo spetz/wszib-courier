@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace Courier.Core.Domain
 {
@@ -13,14 +14,23 @@ namespace Courier.Core.Domain
         public Role Role { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
-        public User(string email, string firstName, string lastName, Role role = Role.User)
+        public User(Guid id, string email, string firstName, string lastName, Role role = Role.User)
         {
-            Id = Guid.NewGuid();
-            Email = email;
+            Id = id;
+            Email = email.ToLowerInvariant();
             FirstName = firstName;
             LastName = lastName;
             Role = role;
             CreatedAt = DateTime.UtcNow;
+        }
+
+        public void SetPassword(string password, IPasswordHasher<User> passwordHasher)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentException("Invalid password.", nameof(password));
+            }
+            PasswordHash = passwordHasher.HashPassword(this, password);
         }
     }
 }
