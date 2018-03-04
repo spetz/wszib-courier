@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
 using Courier.Api.Framework;
 using Courier.Core.Commands.Users;
+using Courier.Core.Dto;
+using Courier.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Courier.Api.Controllers
@@ -9,10 +11,21 @@ namespace Courier.Api.Controllers
     public class AccountController : ApiControllerBase
     {
         private readonly ICommandDispatcher _commandDispatcher;
+        private readonly IUserService _userService;
 
-        public AccountController(ICommandDispatcher commandDispatcher)
+        public AccountController(ICommandDispatcher commandDispatcher,
+            IUserService userService)
         {
             _commandDispatcher = commandDispatcher;
+            _userService = userService;
+        }
+
+        [HttpGet("me")]
+        public async Task<IActionResult> Get()
+        {
+            //var user = await _userService.GetAsync(...)
+
+            return Ok("Hello ...");
         }
 
         [HttpPost("sign-up")]
@@ -26,9 +39,9 @@ namespace Courier.Api.Controllers
         [HttpPost("sign-in")]
         public async Task<IActionResult> SignIn([FromBody] SignIn command)
         {
-            await _commandDispatcher.DispatchAsync(command);
+            var jwt = await _commandDispatcher.DispatchAsync<SignIn,JsonWebTokenDto>(command);
 
-            return Ok();
+            return Ok(jwt);
         }
     }
 }

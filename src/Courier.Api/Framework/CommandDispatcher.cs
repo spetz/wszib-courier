@@ -25,5 +25,17 @@ namespace Courier.Api.Framework
             }
             await handler.HandleAsync(command);
         }
+
+        public async Task<TResult> DispatchAsync<TCommand, TResult>(TCommand command) where TCommand : ICommand
+        {
+            var handler = _context.Resolve<ICommandHandler<TCommand,TResult>>();
+            if (handler == null)
+            {
+                throw new ArgumentException($"Command handler: '{typeof(TCommand).Name}' was not found.",
+                    nameof(handler));
+            }
+
+            return await handler.HandleAsync(command);
+        }
     }
 }

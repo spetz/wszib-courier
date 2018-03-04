@@ -51,6 +51,10 @@ namespace Courier.Api
                 .AsClosedTypesOf(typeof(ICommandHandler<>))
                 .InstancePerLifetimeScope();
 
+            builder.RegisterAssemblyTypes(coreAssembly)
+                .AsClosedTypesOf(typeof(ICommandHandler<,>))
+                .InstancePerLifetimeScope();
+
             builder.RegisterType<PasswordHasher<User>>()
                 .As<IPasswordHasher<User>>();
                 
