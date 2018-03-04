@@ -42,6 +42,7 @@ namespace Courier.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMvc();
         }
     }
