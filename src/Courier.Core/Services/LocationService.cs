@@ -11,6 +11,7 @@ namespace Courier.Core.Services
 {
     public class LocationService : ILocationService
     {
+        private static readonly IDictionary<string, AddressDto> _addresses = new Dictionary<string, AddressDto>();
         private static readonly HttpClient _client = new HttpClient
         {
             BaseAddress = new Uri("https://maps.googleapis.com/maps/api/geocode/json")
@@ -21,6 +22,11 @@ namespace Courier.Core.Services
 
         public async Task<AddressDto> GetAsync(string address)
         {
+            var key = address.ToLowerInvariant();
+            if (_addresses.ContainsKey(key))
+            {
+                return _addresses[key];
+            }
             var response = await _client.GetAsync($"?address={address}&key=AIzaSyD5UaNtOrvxjvxUJscB1qsCfHrPWv6UTtk");
             if (!response.IsSuccessStatusCode)
             {
@@ -29,13 +35,15 @@ namespace Courier.Core.Services
             var content = await response.Content.ReadAsStringAsync();
             var location = JsonConvert.DeserializeObject<LocationResponse>(content);
             var result = location.Results?.FirstOrDefault();
-            
-            return result == null ? null : new AddressDto
+            var dto = new AddressDto
                 {
                     Latitude = result.Geometry.Location.Lat,
                     Longitude = result.Geometry.Location.Lng,
                     Location = result.FormattedAddress
                 };
+            _addresses[key] = dto;
+
+            return dto;
         }
 
         private class LocationResponse

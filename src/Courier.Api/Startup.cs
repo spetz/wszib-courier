@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Courier.Api.Framework;
 using Courier.Core.Commands;
 using Courier.Core.Commands.Parcels;
+using Courier.Core.Options;
 using Courier.Core.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,6 +33,8 @@ namespace Courier.Api
             services.AddTransient<IParcelService,ParcelService>();
             services.AddTransient<ICommandHandler<CreateParcel>,CreateParcelHandler>();
             services.AddSingleton<ICommandDispatcher>(new CommandDispatcher(services));
+            services.AddTransient<IDataSeeder,DataSeeder>();
+            services.Configure<AppOptions>(Configuration.GetSection("app"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,7 +44,9 @@ namespace Courier.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            var dataSeeder = app.ApplicationServices.GetService<IDataSeeder>();
+            dataSeeder.SeedAsync();
+            
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMvc();
         }
