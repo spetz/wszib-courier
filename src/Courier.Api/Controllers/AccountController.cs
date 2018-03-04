@@ -22,5 +22,13 @@ namespace Courier.Api.Controllers
 
             return Ok();
         }
+
+        [HttpPost("sign-in")]
+        public async Task<IActionResult> SignIn([FromBody] SignIn command)
+        {
+            await _commandDispatcher.DispatchAsync(command);
+
+            return Ok();
+        }
     }
 }

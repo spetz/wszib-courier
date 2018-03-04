@@ -32,7 +32,12 @@ namespace Courier.Core.Services
 
         public async Task SignInAsync(string email, string password)
         {
-            throw new NotImplementedException();
+            var user = _users.SingleOrDefault(x => x.Email == email.ToLowerInvariant());
+            if (user == null || !user.ValidatePassword(password, _passwordHasher))
+            {
+                throw new Exception("Invalid credentials.");
+            }
+            await Task.CompletedTask;
         }
 
         public async Task ChangePasswordAsync(Guid id, string currentPassword, string newPassword)

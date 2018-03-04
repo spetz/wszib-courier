@@ -32,5 +32,8 @@ namespace Courier.Core.Domain
             }
             PasswordHash = passwordHasher.HashPassword(this, password);
         }
+
+        public bool ValidatePassword(string password, IPasswordHasher<User> passwordHasher)
+            => passwordHasher.VerifyHashedPassword(this, PasswordHash, password) != PasswordVerificationResult.Failed;
     }
 }
