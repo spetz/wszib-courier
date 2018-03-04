@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Courier.Core.Services;
 
@@ -14,7 +15,7 @@ namespace Courier.Core.Commands.Users
 
         public async Task HandleAsync(SignIn command)
         {
-            await _userService.SignInAsync(command.Email, command.Password);
+            var jwt = await _userService.SignInAsync(command.Email, command.Password);
         }
     }
 }

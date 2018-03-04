@@ -35,6 +35,7 @@ namespace Courier.Api
         {
             services.AddMvc();
             services.Configure<AppOptions>(Configuration.GetSection("app"));
+            services.Configure<JwtOptions>(Configuration.GetSection("jwt"));
 
             var builder = new ContainerBuilder();
             var apiAssembly = typeof(Startup).Assembly;
