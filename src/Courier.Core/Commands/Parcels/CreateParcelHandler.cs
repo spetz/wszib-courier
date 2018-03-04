@@ -15,7 +15,7 @@ namespace Courier.Core.Commands.Parcels
         public async Task HandleAsync(CreateParcel command)
         {
             await _parcelService.CreateAsync(command.Id, command.Name,
-                command.SenderId, command.ReceiverId, command.ReceiverAddress);            
+                command.UserId, command.ReceiverId, command.ReceiverAddress);            
         }
     }
 }

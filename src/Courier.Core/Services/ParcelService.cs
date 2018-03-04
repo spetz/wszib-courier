@@ -38,8 +38,13 @@ namespace Courier.Core.Services
         public async Task<PagedResult<ParcelDto>> BrowseAsync(BrowseParcels query)
         {
             await Task.CompletedTask;
+            var parcels = _parcels.AsEnumerable();
+            if (query.Mine)
+            {
+                parcels = parcels.Where(x => x.SenderId == query.UserId);
+            }
             
-            return _parcels.Select(x => new ParcelDto
+            return parcels.Select(x => new ParcelDto
             {
                 Id = x.Id,
                 Name = x.Name,

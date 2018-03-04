@@ -4,6 +4,7 @@ namespace Courier.Core.Commands.Users
 {
     public class SignUp : ICommand
     {
+        public Guid UserId { get; set; }
         public Guid Id { get; } = Guid.NewGuid();
         public string Email { get; }
         public string Password { get; }

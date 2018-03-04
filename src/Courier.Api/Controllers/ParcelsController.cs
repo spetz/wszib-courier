@@ -4,6 +4,8 @@ using Courier.Api.Framework;
 using Courier.Core.Commands.Parcels;
 using Courier.Core.Queries;
 using Courier.Core.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Courier.Api.Controllers
@@ -11,12 +13,10 @@ namespace Courier.Api.Controllers
     public class ParcelsController : ApiControllerBase
     {
         private readonly IParcelService _parcelService;
-        private readonly ICommandDispatcher _commandDispatcher;
 
         public ParcelsController(ICommandDispatcher commandDispatcher,
-            IParcelService parcelService)
+            IParcelService parcelService) : base(commandDispatcher)
         {
-            _commandDispatcher = commandDispatcher;
             _parcelService = parcelService;
         }
 
@@ -49,9 +49,10 @@ namespace Courier.Api.Controllers
         }
 
         [HttpPost("")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Post([FromBody] CreateParcel command)
         {
-            await _commandDispatcher.DispatchAsync(command);
+            await DispatchAsync(command);
 
             return CreatedAtAction(nameof(Get), new { id = command.Id}, null);
         }

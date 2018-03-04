@@ -12,13 +12,11 @@ namespace Courier.Api.Controllers
     [Route("")]
     public class AccountController : ApiControllerBase
     {
-        private readonly ICommandDispatcher _commandDispatcher;
         private readonly IUserService _userService;
 
         public AccountController(ICommandDispatcher commandDispatcher,
-            IUserService userService)
+            IUserService userService) : base(commandDispatcher)
         {
-            _commandDispatcher = commandDispatcher;
             _userService = userService;
         }
 
@@ -34,7 +32,7 @@ namespace Courier.Api.Controllers
         [HttpPost("sign-up")]
         public async Task<IActionResult> SignUp([FromBody] SignUp command)
         {
-            await _commandDispatcher.DispatchAsync(command);
+            await DispatchAsync(command);
 
             return Ok();
         }
@@ -42,7 +40,7 @@ namespace Courier.Api.Controllers
         [HttpPost("sign-in")]
         public async Task<IActionResult> SignIn([FromBody] SignIn command)
         {
-            var jwt = await _commandDispatcher.DispatchAsync<SignIn,JsonWebTokenDto>(command);
+            var jwt = await DispatchAsync<SignIn,JsonWebTokenDto>(command);
 
             return Ok(jwt);
         }
