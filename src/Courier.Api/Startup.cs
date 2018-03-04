@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Courier.Api.Framework;
 using Courier.Core.Commands;
 using Courier.Core.Commands.Parcels;
@@ -24,21 +26,37 @@ namespace Courier.Api
         }
 
         public IConfiguration Configuration { get; }
+        public IContainer Container { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddTransient<ILocationService,LocationService>();
-            services.AddTransient<IParcelService,ParcelService>();
-            services.AddTransient<ICommandHandler<CreateParcel>,CreateParcelHandler>();
-            services.AddSingleton<ICommandDispatcher>(new CommandDispatcher(services));
-            services.AddTransient<IDataSeeder,DataSeeder>();
             services.Configure<AppOptions>(Configuration.GetSection("app"));
+
+            var builder = new ContainerBuilder();
+            var apiAssembly = typeof(Startup).Assembly;
+            var coreAssembly = typeof(IParcelService).Assembly;
+
+            builder.RegisterAssemblyTypes(apiAssembly)
+                .AsImplementedInterfaces();
+
+            builder.RegisterAssemblyTypes(coreAssembly)
+                .AsImplementedInterfaces();
+
+            builder.RegisterAssemblyTypes(coreAssembly)
+                .AsClosedTypesOf(typeof(ICommandHandler<>))
+                .InstancePerLifetimeScope();
+
+            builder.Populate(services);
+            Container = builder.Build();
+
+            return new AutofacServiceProvider(Container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
+            IApplicationLifetime applicationLifetime)
         {
             if (env.IsDevelopment())
             {
@@ -46,9 +64,10 @@ namespace Courier.Api
             }
             var dataSeeder = app.ApplicationServices.GetService<IDataSeeder>();
             dataSeeder.SeedAsync();
-            
+
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMvc();
+            applicationLifetime.ApplicationStopped.Register(() => Container.Dispose());
         }
     }
 }
