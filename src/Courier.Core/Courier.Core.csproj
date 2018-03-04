@@ -4,7 +4,12 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.identity" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.1" />

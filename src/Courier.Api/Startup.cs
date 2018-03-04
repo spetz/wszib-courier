@@ -34,6 +34,7 @@ namespace Courier.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddJwt();
             services.Configure<AppOptions>(Configuration.GetSection("app"));
             services.Configure<JwtOptions>(Configuration.GetSection("jwt"));
 

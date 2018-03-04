@@ -3,6 +3,8 @@ using Courier.Api.Framework;
 using Courier.Core.Commands.Users;
 using Courier.Core.Dto;
 using Courier.Core.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Courier.Api.Controllers
@@ -21,11 +23,12 @@ namespace Courier.Api.Controllers
         }
 
         [HttpGet("me")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Get()
         {
             //var user = await _userService.GetAsync(...)
 
-            return Ok("Hello ...");
+            return Ok($"Hello user with id: '{UserId}'.");
         }
 
         [HttpPost("sign-up")]
